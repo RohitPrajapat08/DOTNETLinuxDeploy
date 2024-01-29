@@ -1,0 +1,112 @@
+Deploying a .NET application on an AWS EC2 instance running Ubuntu involves several steps. Below is a general guide to help you through the process:
+
+### Prerequisites:
+
+1. **EC2 Instance:**
+   - Launch an EC2 instance with Ubuntu Server as the operating system.
+   - Ensure that the security group associated with the instance allows inbound traffic on the necessary ports (e.g., HTTP on port 80, HTTPS on port 443).
+
+2. **Connect to the EC2 Instance:**
+   - Connect to your EC2 instance using SSH. You'll need the private key associated with the key pair used when creating the instance.
+
+   ```bash
+   ssh -i /path/to/private-key.pem ubuntu@your-instance-ip
+   ```
+
+### Deployment Steps:
+
+### 1. Install .NET SDK on Ubuntu:
+
+- Update the package manager:
+
+  ```bash
+  sudo apt-get update
+  ```
+
+- Install the .NET SDK. The following commands install the SDK version 3.1, but you can adjust it based on your preferred version:
+
+  ```bash
+  sudo apt-get install -y apt-transport-https && sudo apt-get update
+  sudo apt-get install -y dotnet-sdk-3.1
+  ```
+
+- Verify the installation:
+
+  ```bash
+  dotnet --version
+  ```
+
+### 2. Copy and Publish Your .NET Application:
+
+- Copy your .NET application files to the EC2 instance. You can use `scp` or other methods.
+
+  ```bash
+  scp -i /path/to/private-key.pem -r /path/to/local-app ubuntu@your-instance-ip:/path/to/remote-app
+  ```
+
+- Navigate to the directory containing your .NET application:
+
+  ```bash
+  cd /path/to/remote-app
+  ```
+
+- Build and publish your .NET application:
+
+  ```bash
+  dotnet publish -c Release
+  ```
+
+### 3. Configure and Run the Application:
+
+- Navigate to the published output directory:
+
+  ```bash
+  cd /path/to/remote-app/bin/Release/netcoreapp3.1/publish/
+  ```
+
+- Run your .NET application:
+
+  ```bash
+  dotnet your-app-name.dll
+  ```
+
+  Replace `your-app-name.dll` with the actual name of your application's DLL file.
+
+### 4. Optional: Use a Reverse Proxy (e.g., Nginx or Apache):
+
+- Install a web server like Nginx or Apache as a reverse proxy to forward requests to your .NET application.
+
+  For Nginx:
+
+  ```bash
+  sudo apt-get install nginx
+  ```
+
+  For Apache:
+
+  ```bash
+  sudo apt-get install apache2
+  ```
+
+  Configure the reverse proxy to forward requests to your .NET application.
+
+### 5. Optional: Set Up a Process Manager (e.g., systemd or Supervisor):
+
+- To keep your .NET application running in the background, you can use a process manager.
+
+  For systemd:
+
+  - Create a systemd service file (`your-app-name.service`) to manage your application.
+  - Reload systemd and start your application.
+
+### 6. Configure Firewall Rules (if necessary):
+
+- Adjust firewall rules to allow traffic on the necessary ports.
+
+### 7. Monitor and Maintain:
+
+- Set up monitoring tools to keep track of your EC2 instance's performance.
+- Automate deployments using CI/CD tools.
+- Configure backup and maintenance procedures.
+
+This guide provides a high-level overview. The specific steps may vary based on your application's requirements and architecture. Adjust the steps accordingly, and consult the documentation for the tools and frameworks you're using.
